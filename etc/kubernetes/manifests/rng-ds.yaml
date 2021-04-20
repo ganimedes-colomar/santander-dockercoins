@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: rng-ds
+spec:
+  selector:
+    matchLabels:
+      app: rng-label
+  template:
+    metadata:
+      labels:
+        app: rng-label
+    spec:
+      containers:
+        -
+          image: ganimedescolomar/santander-dockercoins:latest-rng
+          name: rng-container
+          ports:
+            - containerPort: 8080
