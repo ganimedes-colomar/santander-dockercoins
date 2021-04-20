@@ -1,4 +1,4 @@
-FROM node
+FROM node:4
 RUN npm install redis && npm install express
 COPY webui.js .
 COPY files /files
