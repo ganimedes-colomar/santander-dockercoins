@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-        app: webuil-label
+        app: webui-label
     spec:
       containers:
         -
