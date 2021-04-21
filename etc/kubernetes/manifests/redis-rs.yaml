@@ -20,7 +20,7 @@ spec:
             - containerPort: 6379
           volumeMounts:
             -
-              monutPath: /data
+              montPath: /data
               name: redis-volume
       volumes:
         -
