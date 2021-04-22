@@ -25,4 +25,6 @@ spec:
       volumes:
         -
           name: redis-volume
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: redis-pvc
+            readOnly: false
