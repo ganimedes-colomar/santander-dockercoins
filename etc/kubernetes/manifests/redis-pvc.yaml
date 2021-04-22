@@ -6,6 +6,8 @@ spec:
   accessModes:
     - ReadWriteOnce
   resources:
-    limits: 1Gi
-    requests: 1Gi
+    limits: 
+      storage: 1Gi
+    requests: 
+      storage: 1Gi
   storageClassName: gp2
