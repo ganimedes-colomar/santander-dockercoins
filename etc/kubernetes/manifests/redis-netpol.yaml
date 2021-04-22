@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: redis-netpol
+spec:
+  ingress: 
+    -
+      from: 
+        -
+          namespaceSelector:
+            matchLabels:
+              name: santander-dockercoins
+        -
+          podSelector:
+            matchLabels:
+              app: webui-label
+        -
+          podSelector:
+            matchLabels:
+              app: worker-label
+      ports:
+        -
+          port: 6379
+          protocol: TCP
+  podSelector: 
+    matchLabels:
+      app: redis-label
+  policyTypes:
+    - Ingress
