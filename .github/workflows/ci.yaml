@@ -15,7 +15,7 @@ jobs:
                         name: docker build
                         run: |
                                 for app in hasher rng webui worker; do
-                                        docker build -t ${app} ${app};
+                                        docker build -t ${app} -f ${app}/Dockerfile .;
                                 done;
                 -
                         name: docker network create
@@ -25,13 +25,19 @@ jobs:
                                 done;
                 -
                         name: docker run redis
-                        run: docker run -d --name redis --network redis -v redis:/data redis;
+                        run: docker run -d --rm --network redis-network --name redis -v redis-volume:/data -w /data --entrypoint docker-entrypoint.sh redis:6.2.4-alpine3.13@sha256:b7cb70118c9729f8dc019187a4411980418a87e6a837f4846e87130df379e2c8 redis-server;
                 -
-                        name: docker run
-                        run: |
-                                for app in hasher rng webui worker; do
-                                        docker run -d --name ${app} --network ${app} ${app};
-                                done;
+                        name: docker run hasher
+                        run: docker run -d --rm --network hasher-network --name hasher -v $PWD/hasher/:/src/:ro -w /src --entrypoint ruby hasher hasher.rb
+                -
+                        name: docker run rng
+                        run: docker run -d --rm --network rng-network --name rng --entrypoint python -v $PWD/rng/:/src/:ro -w /src rng rng.py
+                -
+                        name: docker run worker
+                        run: docker run -d --rm --network worker-network --name worker --entrypoint python -v $PWD/worker/:/src/:ro -w /src worker worker.py
+                -
+                        name: docker run webui
+                        run: docker run -d --rm --network webui-network --name webui --entrypoint node -v $PWD/webui/:/src/:ro -w /src webui webui.js
                 -
                         name: docker network connect redis
                         run: |
