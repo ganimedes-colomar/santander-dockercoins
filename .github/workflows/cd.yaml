@@ -1,0 +1,22 @@
+name: cd
+on:
+  release:
+    types:
+      - published
+jobs:
+  Dockerhub:
+    env:
+      username: ganimedescolomar
+    runs-on: ubuntu-18.04
+    steps:
+    -
+            name: checkout
+            uses: actions/checkout@v2
+    -
+            name: docker build
+            run: |
+                    for app in hasher rng webui worker; do
+                            docker build -t ${app} -f ${app}/Dockerfile .;
+                    done;
+    - name: test
+      run: basename ${GITHUB_REF}
