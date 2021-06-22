@@ -15,7 +15,7 @@ jobs:
                         name: docker build
                         run: |
                                 for app in hasher rng webui worker; do
-                                        docker build -t ${app} .;
+                                        docker build -t ${app} ${app};
                                 done;
                 -
                         name: docker network create
