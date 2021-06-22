@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: santander-dockercoins-hasher-deploy
+  name: santander-dockercoins-rng-deploy
 spec:
   selector:
     matchLabels:
-      app: santander-dockercoins-hasher
+      app: santander-dockercoins-rng
   replicas: 3
   template:
     metadata:
