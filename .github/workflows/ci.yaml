@@ -1,0 +1,91 @@
+name: CI
+on:
+        push:
+                branches:
+                -
+                        docker210621
+jobs:
+        docker:
+                runs-on: ubuntu-18.04
+                steps:
+                -
+                        name: checkout
+                        uses: actions/checkout@v2
+                -
+                        name: docker build
+                        run: |
+                                for app in hasher rng webui worker; do
+                                        docker build -t ${app} .;
+                                done;
+                -
+                        name: docker network create
+                        run: |
+                                for app in hasher redis rng webui worker; do
+                                        docker network create ${app};
+                                done;
+                -
+                        name: docker run redis
+                        run: docker run -d --name redis --network redis -v redis:/data redis;
+                -
+                        name: docker run
+                        run: |
+                                for app in hasher rng webui worker; do
+                                        docker run -d --name ${app} --network ${app} ${app};
+                                done;
+                -
+                        name: docker network connect redis
+                        run: |
+                                for app in webui worker; do
+                                        docker network connect redis ${app};
+                                done;
+                -
+                        name: docker network connect
+                        run: |
+                                for network in hasher rng; do
+                                        docker network connect ${network} worker;
+                                done;
+                -
+                        name: docker logs hasher
+                        run: |
+                                while true; do
+                                        docker logs hasher 2>&1 \
+                                        | grep '== Sinatra .* has taken the stage on .* for development with backup from Thin' \
+                                                && break;
+                                        sleep 10;
+                                done;
+                -
+                        name: docker logs redis
+                        run: |
+                                while true; do
+                                        docker logs redis 2>&1 \
+                                        | grep 'Ready to accept connections' \
+                                                && break;
+                                        sleep 10;
+                                done;
+                -
+                        name: docker logs rng
+                        run: |
+                                while true; do
+                                        docker logs rng 2>&1 \
+                                        | grep 'Running on' \
+                                                && break;
+                                        sleep 10;
+                                done;
+                -
+                        name: docker logs webui
+                        run: |
+                                while true; do
+                                        docker logs webui 2>&1 \
+                                        | grep 'WEBUI running on port' \
+                                                && break;
+                                        sleep 10;
+                                done;
+                -
+                        name: docker logs worker
+                        run: |
+                                while true; do
+                                        docker logs worker 2>&1 \
+                                        | grep 'Coin found' \
+                                                && break;
+                                        sleep 10;
+                                done;
