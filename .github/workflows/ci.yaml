@@ -91,7 +91,7 @@ jobs:
                         run: |
                                 while true; do
                                         docker logs worker 2>&1 \
-                                        | grep 'Coin found' \
+                                        | grep "Coin found" \
                                                 && break;
                                         sleep 10;
                                 done;
