@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: santander-dockercoins-worker-deploy
+spec:
+  selector:
+    matchLabels:
+      app: santander-dockercoins-worker
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: santander-dockercoins-worker
+    spec:
+      containers:
+        - name: santander-dockercoins-worker-container
+          args:
+            - worker.py
+          command:
+            - python
+          image: ganimedescolomar/santander-dockercoins:1.1-worker
+          volumeMounts:
+            -
+              mountPath: /src/
+              name: santander-dockercoins-worker-volume
+              readOnly: true
+          workingDir: /src/
+      initContainers:
+        -
+          name: santander-dockercoins-worker-initcontainer
+          args:
+            - -c
+            - cd /src/; git clone https://github.com/ganimedes-colomar/santander-dockercoins.git; cd santander-dockercoins; git checkout docker210621; cp worker/worker.py /src/; rm -rf /src/santander-dockercoins;
+          command:
+            - sh
+          image: alpine/git:latest
+          volumeMounts:
+            -
+              mountPath: /src/
+              name: santander-dockercoins-worker-volume
+              readOnly: false
+      volumes:
+        -
+          name: santander-dockercoins-worker-volume
+          emptyDir: {}
